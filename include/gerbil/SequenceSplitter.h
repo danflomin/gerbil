@@ -49,9 +49,13 @@ class SequenceSplitter{
 
 	std::atomic<uint64> _baseNumbers;  // total number of bases
 
+	std::string uhsPath;
+	byte* uhs;
+
 	uint32_t invMMer(const uint32_t &mmer);    // inverts a minimizer
 	bool isAllowed(uint32 mmer);               // checks whether a minimizer is allowed (special, tested strategies)
 	void detMMerHisto();                       // calculation of a histogram (special, tested strategies)
+	void loadUhs(std::string path = "res_7.txt");
 
 	void processThread(const uint &id);        // starts a single thread
 
@@ -68,7 +72,8 @@ public:
 			const uint32_t &k,										// size of k-mer
 			const uint8 &m,											// Size of m-mer (minimizer)
 			const uint_tfn &tempFilesNumber,						// Number of Bin-Files
-			const bool &norm										// normalized k-mers
+			const bool &norm,										// normalized k-mers
+			std::string uhsPath
 	);
 
     /*

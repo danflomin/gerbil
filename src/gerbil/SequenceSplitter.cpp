@@ -7,6 +7,8 @@
 
 
 #include "../../include/gerbil/SequenceSplitter.h"
+#include <iostream>
+#include <string>
 
 
 #define SS_MMER_UNDEFINED 0x80000000
@@ -49,7 +51,6 @@ gerbil::SequenceSplitter::~SequenceSplitter() {
 gerbil::SyncSwapQueueMPSC<gerbil::SuperBundle>** gerbil::SequenceSplitter::getSuperBundleQueues() {
 	return _superBundleQueues;
 }
-
 uint32_t gerbil::SequenceSplitter::invMMer(const uint32_t &mmer){
 	uint32 rev = 0;
 	uint32 immer = ~mmer;
@@ -61,6 +62,7 @@ uint32_t gerbil::SequenceSplitter::invMMer(const uint32_t &mmer){
 	}
 	return rev;
 }
+
 
 // kmc2 strategy
 bool gerbil::SequenceSplitter::isAllowed(uint32 mmer) {
@@ -88,13 +90,69 @@ bool gerbil::SequenceSplitter::isAllowed(uint32 mmer) {
 	return true;
 }
 
+void gerbil::SequenceSplitter::loadUhs(std::string path)
+{
+	uint32 mmersNumber = 1<<(2*_m);
+	uhs = new byte[mmersNumber];
+	for(int i = 0; i< mmersNumber; i++) 
+    	uhs[i] = 0;
+    
+    char num_codes[256];
+	for (int i = 0; i < 256; i++)
+        num_codes[i] = -1;
+	num_codes['A'] = num_codes['a'] = 0;
+	num_codes['C'] = num_codes['c'] = 1;
+	num_codes['G'] = num_codes['g'] = 2;
+	num_codes['T'] = num_codes['t'] = 3;
+
+	std::ifstream infile(path);
+	int str_value;
+	std::string line;
+	std::cout << "lolz0" << std::endl<< std::flush;
+	while (std::getline(infile, line))
+	{
+		str_value = 0;
+		const char *seq = line.c_str();
+		for(uint32 i = 0; i < _m; i++)
+		{
+			str_value += num_codes[seq[i]] << (2*_m - (1+i)*2);
+		}
+		//str_value = (num_codes[seq[0]] << 16) + (num_codes[seq[1]] << 14) + (num_codes[seq[2]] << 12) + (num_codes[seq[3]] << 10) + (num_codes[seq[4]] << 8) + (num_codes[seq[5]] << 6) + (num_codes[seq[6]] << 4) + (num_codes[seq[7]]<< 2) + (num_codes[seq[8]]);
+		uhs[str_value] = 1;
+	}
+	std::cout << "lolz6" << std::endl<< std::flush;
+	infile.close();
+	std::cout << "lolz7" << std::endl<< std::flush;
+}
+
+
 void gerbil::SequenceSplitter::detMMerHisto() {
 	const uint32 mMersNumber = 1 << (2 * _m);
 
+	loadUhs();
+
 	// kmc2 strategy
 	std::vector<std::pair<uint32_t,uint32_t>> kMerFrequencies;
+	uint32 normalized_value;
 	for(uint32 mmer = 0; mmer < mMersNumber; ++mmer)
-		kMerFrequencies.push_back(std::make_pair(isAllowed(mmer) ? mmer : 0xffffffffu, mmer));
+	{
+		if(uhs[mmer] == 0)
+		{
+			if(isAllowed(mmer))
+				normalized_value = 2*mMersNumber + mmer;
+			else
+				normalized_value = 3*mMersNumber + mmer;
+		}
+		else
+		{
+			if(isAllowed(mmer))
+				normalized_value = mmer;
+			else
+				normalized_value = mMersNumber + mmer;
+		}
+		kMerFrequencies.push_back(std::make_pair(normalized_value, mmer));	
+	}
+		
 
 	std::sort(kMerFrequencies.begin(), kMerFrequencies.end());
 	uint32 rank = 0;
@@ -308,6 +366,7 @@ void gerbil::SequenceSplitter::processThread(const uint &id) {
 		int32 smer_c = (uint32) _m - _k;
 		uint_tfn curTempFileId;
 
+		// TODO: HERE CHANGE COMPARISON
 		for(uint32 i(_m - 1); i < reads_size; ++i) {
 			cur_val = mmerval[i];
 
