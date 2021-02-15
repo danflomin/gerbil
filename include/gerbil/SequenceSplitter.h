@@ -72,8 +72,8 @@ public:
 			const uint32_t &k,										// size of k-mer
 			const uint8 &m,											// Size of m-mer (minimizer)
 			const uint_tfn &tempFilesNumber,						// Number of Bin-Files
-			const bool &norm,										// normalized k-mers
-			std::string uhsPath
+			const bool &norm//,										// normalized k-mers
+			//std::string uhsPath
 	);
 
     /*

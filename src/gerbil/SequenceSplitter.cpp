@@ -9,6 +9,7 @@
 #include "../../include/gerbil/SequenceSplitter.h"
 #include <iostream>
 #include <string>
+#include <fstream>
 
 
 #define SS_MMER_UNDEFINED 0x80000000

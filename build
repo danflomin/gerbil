@@ -1,0 +1,4 @@
+export CXX=/home/gaga/danflomin/usr/bin/g++
+export CC=/home/gaga/danflomin/usr/bin/gcc
+/home/gaga/danflomin/usr/bin/cmake .
+/home/gaga/danflomin/usr/bin/cmake --build .
