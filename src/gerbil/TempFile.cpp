@@ -66,7 +66,13 @@ bool gerbil::TempFile::write(SuperBundle *superBundle) {
 	_smers += superBundle->sMerNumber;
 	_kmers += superBundle->kMerNumber;
 	_filled += superBundle->getSize();
-	return fwrite((char *) superBundle->data, 1, SUPER_BUNDLE_DATA_SIZE_B, _file) == SUPER_BUNDLE_DATA_SIZE_B;
+	auto x = (char *) superBundle->data;
+	if(x == nullptr)
+	{
+		std::cout << "nullptr";	
+		return true;
+	}
+	return fwrite(x, 1, SUPER_BUNDLE_DATA_SIZE_B, _file) == SUPER_BUNDLE_DATA_SIZE_B;
 }
 
 bool gerbil::TempFile::write(char *data, const uint64 &size, const uint64 &smers, const uint64 &kmers,

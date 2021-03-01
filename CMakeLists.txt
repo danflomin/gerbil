@@ -7,7 +7,7 @@ if(NOT CMAKE_BUILD_TYPE)
 endif(NOT CMAKE_BUILD_TYPE)
 
 # Compile Flags
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fpermissive -w")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -fpermissive -w -g")
 
 # Include Files
 set(HEADER_FILES
@@ -99,7 +99,7 @@ message(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 add_executable(gerbil ${HEADER_FILES} ${SOURCE_FILES_CPP} ${CUDA_OBJECTS})
 
 # build convert
-add_executable(toFasta src/gerbil/toFasta.cpp)
+# add_executable(toFasta src/gerbil/toFasta.cpp)
 
 # link against external libraries
 target_link_libraries(gerbil ${MY_LIBS})

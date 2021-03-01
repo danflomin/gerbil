@@ -199,6 +199,7 @@ namespace gerbil {
 
 						_kMersNumberCPU = cpuHasher.getKMersNumber();
 						_uKMersNumberCPU = cpuHasher.getUKMersNumber();
+						std::cout << _uKMersNumberCPU << std::endl;
 						_btUKMersNumberCPU = cpuHasher.getBtUKMersNumber();
 						_kMersNumberGPU = gpuHasher.getKMersNumber();
 						_uKMersNumberGPU = gpuHasher.getUKMersNumber();
